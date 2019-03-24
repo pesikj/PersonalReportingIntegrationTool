@@ -10,6 +10,7 @@ import base64
 from urllib.parse import urlencode
 import requests
 import common
+import math
 
 jsonConfig = common.jsonConfig
 logger = common.logger
@@ -38,7 +39,9 @@ def LoginToBuxfer():
     
     return token
 
-def SendBankTransactionToBuxfer(token, dictTransaction):
+token = LoginToBuxfer()
+
+def SendBankTransactionToBuxfer(dictTransaction):
     dictTransactionBuxfer = {}
     if ("UserIdentification" in dictTransaction):
         description = dictTransaction["UserIdentification"]
@@ -96,9 +99,9 @@ def SendBankTransactionToBuxfer(token, dictTransaction):
         logger.error(dictTransactionBuxfer)
 
     
-def DownloadTransactionFromBuxfer(token, startDate):
+def DownloadTransactionFromBuxfer(startDate):
     dictStartDate = {}
-    dictStartDate = startDate
+    dictStartDate["startDate"] = startDate
     http = urllib3.PoolManager()
     url = "https://www.buxfer.com/api/transactions?token=" + token
     response = http.request("POST", url, dictStartDate)
@@ -107,14 +110,22 @@ def DownloadTransactionFromBuxfer(token, startDate):
         logger.error(response.text)
     responseJson = json.loads(response.data.decode('utf-8'))
     transactionCount = int(responseJson["response"]["numTransactions"])
-    pages = transactionCount/25 + 1
-    for currPage in range(pages, 1, -1):
+    pages = math.ceil(transactionCount/25)
+    for currPage in range(pages, 0, -1):
         dictPage = dictStartDate
         dictPage["page"] = currPage
         response = http.request("POST", url, dictPage)
+        responseTransactionsJson = json.loads(response.data.decode('utf-8'))
         if (response.status != 200):
             logger.error("Error logging to Buxfer.")
             logger.error(response.text)
-        
+        for transaction in responseTransactionsJson["response"]["transactions"]:
+            transaction["BuxferTransactionID"] = transaction.pop("id")
+            try:
+                common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contBuxferTransactions"], transaction)
+            except Exception as inst:
+                logger.error("Error writing to database.")
+                logger.error(transaction)
+                logger.error(inst)
 
         

@@ -3,7 +3,6 @@ import urllib3
 from datetime import datetime
 import re
 import json
-import azure.cosmos.cosmos_client as cosmos_client
 import sys
 import re
 import base64
@@ -18,9 +17,6 @@ urllib3.disable_warnings()
 with open("BankStatementMapping.json", encoding="UTF-8") as f:
     jsonMappingFile = json.load(f, encoding="utf8")
 
-client = cosmos_client.CosmosClient(url_connection=jsonConfig["CosmosDB"]["Endpoint"], auth={
-                                    'masterKey': jsonConfig["CosmosDB"]["PrimaryKeyRW"]})
-
 def SaveValueToList(dict, key, value):
     if (value):
         dict[key] = value
@@ -31,8 +27,6 @@ def GetElementValue(transaction, elementName):
         return element[0].text
     else:
         return None
-
-token = bux.LoginToBuxfer()
 
 def CopyTransactionFromBankToBuxfer():
     url = jsonConfig["FioBank"]["url"]
@@ -66,7 +60,7 @@ def CopyTransactionFromBankToBuxfer():
         SaveValueToList(dictTransactionData, "AccountBankCode", jsonConfig["FioBank"]["AccountBankCode"])
         
         try:
-            client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contBankTransactions"], dictTransactionData)
+            common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contBankTransactions"], dictTransactionData)
         except Exception as inst:
             logger.error("Error writing to database.")
             logger.error(dictTransactionData)
