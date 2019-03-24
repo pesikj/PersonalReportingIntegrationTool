@@ -1,0 +1,15 @@
+{
+    "Amount": "column_1",
+    "ContraAccount": "column_2",
+    "ContraAccountBankCode": "column_3",
+    "ConstantSymbol": "column_4",
+    "VariableCode": "column_5",
+    "UserIdentification": "column_7",
+    "BankTransactionType": "column_8",
+    "BankName": "column_12",
+    "Currency": "column_14",
+    "RecieverMessage": "column_16",
+    "RequestID": "column_17",
+    "BankTransactionID": "column_22",
+    "Comment": "column_25"
+  }

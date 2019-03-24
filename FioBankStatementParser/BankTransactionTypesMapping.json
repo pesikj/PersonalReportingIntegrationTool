@@ -1,0 +1,16 @@
+{
+    "Poplatek - platební karta": "expense", 
+    "Platba v jiné měně": "expense", 
+    "Inkaso": "expense", 
+    "Platba v hotovosti": "expense", 
+    "Platba převodem uvnitř banky": "expense", 
+    "Platba kartou - příjem": "refund", 
+    "Dobití kreditu mobilního telefonu": "expense", 
+    "Příjem v hotovosti": "income", 
+    "Platba kartou": "expense", 
+    "Vklad pokladnou": "income", 
+    "Bezhotovostní příjem": "income", 
+    "Příjem převodem uvnitř banky": "income", 
+    "Bezhotovostní platba": "expense", 
+    "Poplatek": "expense"
+}
