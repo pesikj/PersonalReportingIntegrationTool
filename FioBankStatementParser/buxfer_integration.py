@@ -108,6 +108,13 @@ def DownloadTransactionFromBuxfer(token, startDate):
     responseJson = json.loads(response.data.decode('utf-8'))
     transactionCount = int(responseJson["response"]["numTransactions"])
     pages = transactionCount/25 + 1
-    for x in range(pages, 1, -1):
-        0
+    for currPage in range(pages, 1, -1):
+        dictPage = dictStartDate
+        dictPage["page"] = currPage
+        response = http.request("POST", url, dictPage)
+        if (response.status != 200):
+            logger.error("Error logging to Buxfer.")
+            logger.error(response.text)
+        
+
         
