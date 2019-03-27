@@ -6,7 +6,6 @@ import json
 import sys
 import re
 import base64
-import simplejson
 import buxfer_integration as bux
 import common
 
@@ -66,4 +65,4 @@ def CopyTransactionFromBankToBuxfer():
             logger.error(dictTransactionData)
             logger.error(inst)
         
-        #bux.SendBankTransactionToBuxfer(token, dictTransactionData)
+        bux.SendBankTransactionToBuxfer(dictTransactionData)

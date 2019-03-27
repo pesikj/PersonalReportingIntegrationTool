@@ -55,12 +55,15 @@ def SendBankTransactionToBuxfer(dictTransaction):
     transactionType = jsonTransactionTypes[dictTransaction["BankTransactionType"]]
 
     if ("Výběr z bankomatu" in description):
+        accountNumber = dictTransaction["Account"] + "/" + dictTransaction["AccountBankCode"]
         transactionType = "transfer"
+        dictTransactionBuxfer["fromAccountId"] = jsonAccounts[accountNumber]
+        dictTransactionBuxfer["toAccountId"] = jsonAccounts["Cash"]
     else:
         accountNumber = dictTransaction["Account"] + "/" + dictTransaction["AccountBankCode"]
         if ("ContraAccount" in dictTransaction and "ContraAccountBankCode" in dictTransaction):
             contraAccountNumber = dictTransaction["ContraAccount"] + "/" + dictTransaction["ContraAccountBankCode"]
-        if (contraAccountNumber in jsonAccounts):
+        if ("contraAccountNumber" in jsonAccounts):
             transactionType = "transfer"
             if (float(dictTransaction["Amount"]) < 0):
                 dictTransactionBuxfer["fromAccountId"] = jsonAccounts[accountNumber]
@@ -99,9 +102,10 @@ def SendBankTransactionToBuxfer(dictTransaction):
         logger.error(dictTransactionBuxfer)
 
     
-def DownloadTransactionFromBuxfer(startDate):
+def DownloadTransactionFromBuxfer(startDate, endDate):
     dictStartDate = {}
     dictStartDate["startDate"] = startDate
+    dictStartDate["endDate"] = endDate
     http = urllib3.PoolManager()
     url = "https://www.buxfer.com/api/transactions?token=" + token
     response = http.request("POST", url, dictStartDate)
@@ -110,7 +114,7 @@ def DownloadTransactionFromBuxfer(startDate):
         logger.error(response.text)
     responseJson = json.loads(response.data.decode('utf-8'))
     transactionCount = int(responseJson["response"]["numTransactions"])
-    pages = math.ceil(transactionCount/25)
+    pages = math.ceil(transactionCount/25) + 1
     for currPage in range(pages, 0, -1):
         dictPage = dictStartDate
         dictPage["page"] = currPage
