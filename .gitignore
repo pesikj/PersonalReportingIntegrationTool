@@ -34,3 +34,6 @@ test-results.xml
 FioBankStatementParser/AccountsBuxferIDs.json
 FioBankStatementParser/AutoTaggingStrings.json
 FioBankStatementParser/.env/**
+FioBankStatementParser/FioStatementParserFunction/FioStatementParserTimeTrigger/Config.json
+FioBankStatementParser/FioStatementParserFunction/FioStatementParserTimeTrigger/AutoTaggingStrings.json
+FioBankStatementParser/FioStatementParserFunction/FioStatementParserTimeTrigger/AccountsBuxferIDs.json
