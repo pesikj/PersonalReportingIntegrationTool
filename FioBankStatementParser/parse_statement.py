@@ -60,9 +60,10 @@ def CopyTransactionFromBankToBuxfer():
         
         try:
             common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contBankTransactions"], dictTransactionData)
+            
         except Exception as inst:
             logger.error("Error writing to database.")
             logger.error(dictTransactionData)
             logger.error(inst)
-        
         bux.SendBankTransactionToBuxfer(dictTransactionData)
+        

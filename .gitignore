@@ -33,3 +33,4 @@ test-results.xml
 !build/
 FioBankStatementParser/AccountsBuxferIDs.json
 FioBankStatementParser/AutoTaggingStrings.json
+FioBankStatementParser/.env/**

@@ -63,17 +63,18 @@ def SendBankTransactionToBuxfer(dictTransaction):
         accountNumber = dictTransaction["Account"] + "/" + dictTransaction["AccountBankCode"]
         if ("ContraAccount" in dictTransaction and "ContraAccountBankCode" in dictTransaction):
             contraAccountNumber = dictTransaction["ContraAccount"] + "/" + dictTransaction["ContraAccountBankCode"]
-        if ("contraAccountNumber" in jsonAccounts):
-            transactionType = "transfer"
-            if (float(dictTransaction["Amount"]) < 0):
-                dictTransactionBuxfer["fromAccountId"] = jsonAccounts[accountNumber]
-                dictTransactionBuxfer["toAccountId"] = jsonAccounts[contraAccountNumber]
+            if (contraAccountNumber in jsonAccounts):
+                transactionType = "transfer"
+                if (float(dictTransaction["Amount"]) < 0):
+                    dictTransactionBuxfer["fromAccountId"] = jsonAccounts[accountNumber]
+                    dictTransactionBuxfer["toAccountId"] = jsonAccounts[contraAccountNumber]
+                else:
+                    dictTransactionBuxfer["toAccountId"] = jsonAccounts[accountNumber]
+                    dictTransactionBuxfer["fromAccountId"] = jsonAccounts[contraAccountNumber]
             else:
-                dictTransactionBuxfer["toAccountId"] = jsonAccounts[accountNumber]
-                dictTransactionBuxfer["fromAccountId"] = jsonAccounts[contraAccountNumber]
+                dictTransactionBuxfer["accountId"] = jsonAccounts[accountNumber]
         else:
             dictTransactionBuxfer["accountId"] = jsonAccounts[accountNumber]
-    
     tags = ""
     if (transactionType == "transfer"):
             tags = "Money Transfer"
@@ -101,6 +102,19 @@ def SendBankTransactionToBuxfer(dictTransaction):
         logger.error(response.text)
         logger.error(dictTransactionBuxfer)
 
+def UploadSpecificTransaction(transactionID):
+    collection_link = \
+        'dbs/' + common.jsonConfig["CosmosDB"]["Database"] + '/colls/' + common.jsonConfig["CosmosDB"]["contBankTransactions"]
+    result = list(common.client.QueryItems(collection_link, {
+        'query': 'SELECT * FROM c WHERE c.BankTransactionID = @BankTransactionID', 
+        'parameters': [
+            {'name':'@BankTransactionID', 'value': str(transactionID)}
+        ]
+    }))
+
+    for transaction in result:
+        
+        SendBankTransactionToBuxfer(transaction)
     
 def DownloadTransactionFromBuxfer(startDate, endDate):
     dictStartDate = {}
