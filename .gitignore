@@ -40,3 +40,4 @@ FioBankStatementParser/FioStatementParserFunction/FioStatementParserTimeTrigger/
 FioBankStatementParser/FioStatementParserFunction/local.settings.json
 FioBankStatementParser/.vscode/**
 FioBankStatementParser/.vscode/settings.json
+FreedcampConnector/config.json
