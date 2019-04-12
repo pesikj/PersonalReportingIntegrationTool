@@ -80,7 +80,7 @@ def SendBankTransactionToBuxfer(dictTransaction):
             tags = "Money Transfer"
     else:
         for autoTaggingString in jsonAutoTaggingStrings:
-            if (autoTaggingString in description):
+            if (re.search(autoTaggingString, description, re.IGNORECASE)):
                 tags = jsonAutoTaggingStrings[autoTaggingString]
                 break
     if (len(tags) == 0):
