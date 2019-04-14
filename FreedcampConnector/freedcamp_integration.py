@@ -82,10 +82,15 @@ def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos
                         break
                 if update_needed:
                     item["id"] = doc["id"]
-                    common.client.ReplaceItem(doc["_self"], item)
+                    try:
+                        common.client.ReplaceItem(doc["_self"], item)
+                    except Exception as inst:
+                        logger.error("Error replacing record.")
+                        logger.error(item)
+                        logger.error(inst)
         has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
 
 #load_projects()
 load_items_with_offset("contFreedcampTasks", "tasks", "FreedcampTaskID", "project_id", {"id": "FreedcampTaskID"}, ["0", "active"], {})
-#load_items_with_offset("contFreedcampTimes", "times", {"id": "FreedcampTimeID"}, [], {}, True)
+load_items_with_offset("contFreedcampTimes", "times", "FreedcampTimeID", "project_id", {"id": "FreedcampTimeID"}, [], {})

@@ -1,3 +1,4 @@
 {
-    "tasks": ["h_parent_id", "h_top_id", "task_group_id", "title", "status", "start_ts", "due_ts", "priority"]
+    "tasks": ["h_parent_id", "h_top_id", "task_group_id", "title", "status", "start_ts", "due_ts", "priority"],
+    "times": ["date_ts", "minutes_count"]
 }
