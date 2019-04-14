@@ -15,6 +15,12 @@ def get_address(address_name, filters = []):
         url = url.format(*filters)
     return url
 
+def get_fields_to_compare(data_array_name):
+    with open("fields_to_compare.json", encoding="UTF-8") as f:
+        json_fields_to_compare = json.load(f, encoding="utf8")
+        fields_to_compare = json_fields_to_compare[data_array_name]
+    return fields_to_compare
+
 def generate_security_address(parameters_passed = False):
     jsonConfig = common.jsonConfig
     FreedcampAPIKey = jsonConfig["Freedcamp"]["FreedcampAPIKey"]
@@ -42,10 +48,11 @@ def load_projects():
             logger.error(project)
             logger.error(inst)
 
-def load_items_with_offset(context_name, data_array_name, rename_fields = {}, parameter_list = [], item_filter = {}):
+def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos_db_partition_key, rename_fields = {}, parameter_list = [], item_filter = {}):
     offset = 0
     limit = jsonConfig["Freedcamp"]["LineLimit"]
     has_more = True
+    fields_to_compare = get_fields_to_compare(data_array_name)
     while has_more == True:
         parameter = parameter_list + [limit, offset]
         url = get_address(data_array_name, parameter) + generate_security_address(True)
@@ -56,15 +63,29 @@ def load_items_with_offset(context_name, data_array_name, rename_fields = {}, pa
                     continue
             for old_name, new_name in rename_fields.items():
                 item[new_name] = item.pop(old_name)
-            try:
-                common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], item)
-            except Exception as inst:
-                logger.error("Error writing to database.")
-                logger.error(item)
-                logger.error(inst)
+
+            query = { "query": """SELECT * FROM c where c.{0} = "{1}"  and c.{2} = "{3}" """.format(cosmos_id_name, item[cosmos_id_name], cosmos_db_partition_key, item[cosmos_db_partition_key]) }
+            results = common.client.QueryItems('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], query)
+            if len(list(results)) == 0:
+                try:
+                    common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], item)
+                except Exception as inst:
+                    logger.error("Error writing to database.")
+                    logger.error(item)
+                    logger.error(inst)
+            else:
+                doc = list(results)[0]
+                update_needed = False
+                for field in fields_to_compare: 
+                    if doc[field] != item[field]:
+                        update_needed = True
+                        break
+                if update_needed:
+                    item["id"] = doc["id"]
+                    common.client.ReplaceItem(doc["_self"], item)
         has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
 
 #load_projects()
-load_items_with_offset("contFreedcampTasks", "tasks", {"id": "FreedcampTaskID"}, ["0", "active"], {})
+load_items_with_offset("contFreedcampTasks", "tasks", "FreedcampTaskID", "project_id", {"id": "FreedcampTaskID"}, ["0", "active"], {})
 #load_items_with_offset("contFreedcampTimes", "times", {"id": "FreedcampTimeID"}, [], {}, True)
