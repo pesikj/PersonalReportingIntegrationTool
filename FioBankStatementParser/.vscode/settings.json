@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\pesi\\AppData\\Local\\conda\\conda\\envs\\r-reticulate\\python.exe"
+    "python.pythonPath": "C:\\Users\\desktop\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
+    "python.linting.pylintEnabled": true
 }

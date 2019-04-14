@@ -42,26 +42,29 @@ def load_projects():
             logger.error(project)
             logger.error(inst)
 
-def load_tasks(archived_projects_tasks = False, archived_tasklists_taks = False):
+def load_items_with_offset(context_name, data_array_name, rename_fields = {}, parameter_list = [], item_filter = {}, archived_records = False):
     offset = 0
     limit = jsonConfig["Freedcamp"]["LineLimit"]
     has_more = True
     while has_more == True:
-        parameter = ["0", limit, offset] if archived_projects_tasks == False else ["1", limit, offset]
-        url = get_address("tasks", parameter) + generate_security_address(True)
-        tasks_call_response = call_freedcamp_API(url)
-        for task in tasks_call_response["data"]["tasks"]:
-            if archived_tasklists_taks == False and task["f_archived_list"] == True:
-                continue
-            task["FreedcampTaskID"] = task.pop("id")
+        parameter = [parameter_list] + [limit, offset]
+        url = get_address(data_array_name, parameter) + generate_security_address(True)
+        freedcamp_call_response = call_freedcamp_API(url)
+        for item in freedcamp_call_response["data"][data_array_name]:
+            for field, value in item_filter.items():
+                if item[field] == value:
+                    continue
+            for old_name, new_name in rename_fields.items():
+                item[new_name] = item.pop(old_name)
             try:
-                common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contFreedcampTasks"], task)
+                common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], item)
             except Exception as inst:
                 logger.error("Error writing to database.")
-                logger.error(task)
+                logger.error(item)
                 logger.error(inst)
-        has_more = tasks_call_response["data"]["meta"]["has_more"]
+        has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
 
-load_projects()
-load_tasks(True, True)
+#load_projects()
+#load_items_with_offset("contFreedcampTasks", "tasks", {"id": "FreedcampTaskID"}, {"f_archived_list": True}, True)
+load_items_with_offset("contFreedcampTimes", "times", {"id": "FreedcampTimeID"}, [], {}, True)
