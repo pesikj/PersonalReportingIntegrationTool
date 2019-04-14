@@ -1,5 +1,5 @@
 {
     "projects": "https://freedcamp.com/api/v1/projects/",
-    "tasks": "https://freedcamp.com/api/v1/tasks/?f_with_archived={0}&limit={1}&offset={2}",
+    "tasks": "https://freedcamp.com/api/v1/tasks/?f_with_archived={0}&lists_status={1}&limit={2}&offset={3}",
     "times": "https://freedcamp.com/api/v1/times/?limit={1}&offset={2}"
 }

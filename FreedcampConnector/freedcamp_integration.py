@@ -42,12 +42,12 @@ def load_projects():
             logger.error(project)
             logger.error(inst)
 
-def load_items_with_offset(context_name, data_array_name, rename_fields = {}, parameter_list = [], item_filter = {}, archived_records = False):
+def load_items_with_offset(context_name, data_array_name, rename_fields = {}, parameter_list = [], item_filter = {}):
     offset = 0
     limit = jsonConfig["Freedcamp"]["LineLimit"]
     has_more = True
     while has_more == True:
-        parameter = [parameter_list] + [limit, offset]
+        parameter = parameter_list + [limit, offset]
         url = get_address(data_array_name, parameter) + generate_security_address(True)
         freedcamp_call_response = call_freedcamp_API(url)
         for item in freedcamp_call_response["data"][data_array_name]:
@@ -66,5 +66,5 @@ def load_items_with_offset(context_name, data_array_name, rename_fields = {}, pa
         offset += int(limit)
 
 #load_projects()
-#load_items_with_offset("contFreedcampTasks", "tasks", {"id": "FreedcampTaskID"}, {"f_archived_list": True}, True)
-load_items_with_offset("contFreedcampTimes", "times", {"id": "FreedcampTimeID"}, [], {}, True)
+load_items_with_offset("contFreedcampTasks", "tasks", {"id": "FreedcampTaskID"}, ["0", "active"], {})
+#load_items_with_offset("contFreedcampTimes", "times", {"id": "FreedcampTimeID"}, [], {}, True)
