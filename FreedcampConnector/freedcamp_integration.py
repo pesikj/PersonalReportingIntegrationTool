@@ -4,6 +4,8 @@ import hashlib
 import urllib3
 import hmac
 import json
+from datetime import datetime
+from datetime import timedelta
 
 jsonConfig = common.jsonConfig
 logger = common.logger
@@ -91,6 +93,7 @@ def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos
         has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
 
-#load_projects()
+load_projects()
 load_items_with_offset("contFreedcampTasks", "tasks", "FreedcampTaskID", "project_id", {"id": "FreedcampTaskID"}, ["0", "active"], {})
-load_items_with_offset("contFreedcampTimes", "times", "FreedcampTimeID", "project_id", {"id": "FreedcampTimeID"}, [], {})
+datefrom = (datetime.today() - timedelta(days=45)).strftime('%Y-%m-%d')
+load_items_with_offset("contFreedcampTimes", "times", "FreedcampTimeID", "project_id", {"id": "FreedcampTimeID"}, [datefrom], {})
