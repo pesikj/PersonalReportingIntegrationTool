@@ -50,11 +50,12 @@ def load_projects():
             logger.error(project)
             logger.error(inst)
 
-def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos_db_partition_key, rename_fields = {}, parameter_list = [], item_filter = {}):
+def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos_db_partition_key, rename_fields = {}, parameter_list = [], item_filter = {}, delete_missing_records = False):
     offset = 0
     limit = jsonConfig["Freedcamp"]["LineLimit"]
     has_more = True
     fields_to_compare = get_fields_to_compare(data_array_name)
+    ids_in_system = {}
     while has_more == True:
         parameter = parameter_list + [limit, offset]
         url = get_address(data_array_name, parameter) + generate_security_address(True)
@@ -65,6 +66,12 @@ def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos
                     continue
             for old_name, new_name in rename_fields.items():
                 item[new_name] = item.pop(old_name)
+            
+            if item[cosmos_db_partition_key] not in ids_in_system:
+                ids_in_system[item[cosmos_db_partition_key]] = [item[cosmos_id_name]]
+            else:
+                ids_list = ids_in_system[item[cosmos_db_partition_key]]
+                ids_list.append(item[cosmos_id_name])
 
             query = { "query": """SELECT * FROM c where c.{0} = "{1}"  and c.{2} = "{3}" """.format(cosmos_id_name, item[cosmos_id_name], cosmos_db_partition_key, item[cosmos_db_partition_key]) }
             results = common.client.QueryItems('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], query)
@@ -92,8 +99,23 @@ def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos
                         logger.error(inst)
         has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
+    if delete_missing_records:
+        search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, "contFreedcampTimes")
+
+def search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, context_name):
+    for partition_key, ids_in_systems in ids_in_system.items():
+        query = { "query": """SELECT * FROM c where c.{0} = "{1}" """.format(cosmos_db_partition_key, partition_key) }
+        results = common.client.QueryItems('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], query)
+        ids_in_database = {}
+        for result in results:
+            ids_in_database[result[cosmos_id_name]] = result
+        for id_in_database, result in ids_in_database.items():
+            if id_in_database not in ids_in_systems:
+                options = { 'partitionKey': result[cosmos_db_partition_key] }
+                common.client.DeleteItem(result["_self"], options)
+
 
 load_projects()
 load_items_with_offset("contFreedcampTasks", "tasks", "FreedcampTaskID", "project_id", {"id": "FreedcampTaskID"}, ["0", "active"], {})
-datefrom = (datetime.today() - timedelta(days=45)).strftime('%Y-%m-%d')
+datefrom = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%d')
 load_items_with_offset("contFreedcampTimes", "times", "FreedcampTimeID", "project_id", {"id": "FreedcampTimeID"}, [datefrom], {})
