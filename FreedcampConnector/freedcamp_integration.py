@@ -114,8 +114,3 @@ def search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partitio
                 options = { 'partitionKey': result[cosmos_db_partition_key] }
                 common.client.DeleteItem(result["_self"], options)
 
-
-load_projects()
-load_items_with_offset("contFreedcampTasks", "tasks", "FreedcampTaskID", "project_id", {"id": "FreedcampTaskID"}, ["0", "active"], {})
-datefrom = (datetime.today() - timedelta(days=30)).strftime('%Y-%m-%d')
-load_items_with_offset("contFreedcampTimes", "times", "FreedcampTimeID", "project_id", {"id": "FreedcampTimeID"}, [datefrom], {})
