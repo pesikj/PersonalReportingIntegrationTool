@@ -1,0 +1,4 @@
+python -m venv venv.garminexport
+. venv.garminexport/bin/activate
+pip install -r requirements.txt
+./garminbackup.py --backup-dir=activities <username or email> --format json_summary
