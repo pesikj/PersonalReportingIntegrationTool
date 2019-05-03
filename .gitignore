@@ -44,3 +44,5 @@ FreedcampConnector/config.json
 FioBankStatementParser/.vscode/settings.json
 FioBankStatementParser/.vscode/settings.json
 GarminConnectedConnector/garminexport/
+GarminConnectedConnector/config.json
+GarminConnectedConnector/activities.json
