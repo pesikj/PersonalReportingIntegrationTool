@@ -50,7 +50,7 @@ def load_projects():
             logger.error(project)
             logger.error(inst)
 
-def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos_db_partition_key, rename_fields = {}, parameter_list = [], item_filter = {}, delete_missing_records = False):
+def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos_db_partition_key, rename_fields = {}, parameter_list = [], item_filter = {}, delete_missing_records_limit = {}):
     offset = 0
     limit = jsonConfig["Freedcamp"]["LineLimit"]
     has_more = True
@@ -99,12 +99,15 @@ def load_items_with_offset(context_name, data_array_name, cosmos_id_name, cosmos
                         logger.error(inst)
         has_more = freedcamp_call_response["data"]["meta"]["has_more"]
         offset += int(limit)
-    if delete_missing_records:
-        search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, "contFreedcampTimes")
+    if len(delete_missing_records_limit) > 0:
+        search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, "contFreedcampTimes", delete_missing_records_limit)
 
-def search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, context_name):
+def search_for_deleted_records(ids_in_system, cosmos_id_name, cosmos_db_partition_key, context_name, delete_missing_records_limit):
     for partition_key, ids_in_systems in ids_in_system.items():
-        query = { "query": """SELECT * FROM c where c.{0} = "{1}" """.format(cosmos_db_partition_key, partition_key) }
+        query_string = """SELECT * FROM c where c.{0} = "{1}"  """.format(cosmos_db_partition_key, partition_key)
+        for key, value in delete_missing_records_limit.items():
+            query_string = query_string + """ and c.{0} >= {1} """.format(key, value)
+        query = { "query":  query_string}
         results = common.client.QueryItems('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"][context_name], query)
         ids_in_database = {}
         for result in results:

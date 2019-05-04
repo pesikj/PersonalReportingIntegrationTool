@@ -11,3 +11,4 @@ client = cosmos_client.CosmosClient(url_connection=jsonConfig["CosmosDB"]["Endpo
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
