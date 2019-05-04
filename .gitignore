@@ -46,3 +46,8 @@ FioBankStatementParser/.vscode/settings.json
 GarminConnectedConnector/garminexport/
 GarminConnectedConnector/config.json
 GarminConnectedConnector/activities.json
+GarminConnectedConnector/Activities
+GarminConnectedConnector/app.log
+GarminConnectedConnector/venv.garminexport/
+GarminConnectedConnector/run.txt
+GarminConnectedConnector/run.txt

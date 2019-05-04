@@ -8,5 +8,5 @@ with open("config.json", encoding="UTF-8") as f:
 client = cosmos_client.CosmosClient(url_connection=jsonConfig["CosmosDB"]["Endpoint"], auth={
                                     'masterKey': jsonConfig["CosmosDB"]["PrimaryKeyRW"]})
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
