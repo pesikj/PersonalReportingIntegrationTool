@@ -1,0 +1,4 @@
+azure
+azure-cosmos
+pylint
+urllib3

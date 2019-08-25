@@ -115,35 +115,4 @@ def UploadSpecificTransaction(transactionID):
     for transaction in result:
         
         SendBankTransactionToBuxfer(transaction)
-    
-def DownloadTransactionFromBuxfer(startDate, endDate):
-    dictStartDate = {}
-    dictStartDate["startDate"] = startDate
-    dictStartDate["endDate"] = endDate
-    http = urllib3.PoolManager()
-    url = "https://www.buxfer.com/api/transactions?token=" + token
-    response = http.request("POST", url, dictStartDate)
-    if (response.status != 200):
-        logger.error("Error logging to Buxfer.")
-        logger.error(response.text)
-    responseJson = json.loads(response.data.decode('utf-8'))
-    transactionCount = int(responseJson["response"]["numTransactions"])
-    pages = math.ceil(transactionCount/25) + 1
-    for currPage in range(pages, 0, -1):
-        dictPage = dictStartDate
-        dictPage["page"] = currPage
-        response = http.request("POST", url, dictPage)
-        responseTransactionsJson = json.loads(response.data.decode('utf-8'))
-        if (response.status != 200):
-            logger.error("Error logging to Buxfer.")
-            logger.error(response.text)
-        for transaction in responseTransactionsJson["response"]["transactions"]:
-            transaction["BuxferTransactionID"] = transaction.pop("id")
-            try:
-                common.client.CreateItem('dbs/' + jsonConfig["CosmosDB"]["Database"] + '/colls/' + jsonConfig["CosmosDB"]["contBuxferTransactions"], transaction)
-            except Exception as inst:
-                logger.error("Error writing to database.")
-                logger.error(transaction)
-                logger.error(inst)
-
         

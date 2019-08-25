@@ -51,3 +51,10 @@ GarminConnectedConnector/app.log
 GarminConnectedConnector/venv.garminexport/
 GarminConnectedConnector/run.txt
 GarminConnectedConnector/.vscode
+GarminConnectedConnector/.vscode/settings.json
+FreedcampConnector/.vscode/settings.json
+BuxferConnector/config.json
+BuxferConnector/.vscode/settings.json
+BuxferConnector/.vscode/launch.json
+FreedcampConnector/.vscode/settings.json
+GarminConnectedConnector/.vscode/settings.json
