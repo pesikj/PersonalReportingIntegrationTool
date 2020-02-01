@@ -60,3 +60,4 @@ FreedcampConnector/.vscode/settings.json
 GarminConnectedConnector/.vscode/settings.json
 GarminConnectedConnector/env/
 /FioBankStatementParser/venv/
+FioBankStatementParser/config.json
