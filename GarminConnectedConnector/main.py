@@ -86,6 +86,8 @@ for file in files:
         activity_data["LocationName"] = data['locationName']
 
     activity_data["DurationInHours"] = float(data['summaryDTO']['duration']) / 3600
+    if 'movingDuration' in data['summaryDTO']:
+        activity_data["MovingDurationInHours"] = float(data['summaryDTO']['movingDuration']) / 3600
 
     if 'distance' in data['summaryDTO']:
         activity_data["DistanceInKilometers"] = float(data['summaryDTO']['distance'])/1000
@@ -96,6 +98,13 @@ for file in files:
         activity_data["ElevationLoss"] = float(data['summaryDTO']['elevationLoss'])
     if 'maxSpeed' in data['summaryDTO']:
         activity_data["MaxSpeed"] = data['summaryDTO']['maxSpeed']
+    
+    if 'startLatitude' in data['summaryDTO'] and 'startLongitude' in data['summaryDTO']:
+        activity_data["StartLatitude"] = float(data['summaryDTO']['startLatitude'])
+        activity_data["StartLongitude"] = float(data['summaryDTO']['startLongitude'])
+    if 'endLatitude' in data['summaryDTO'] and 'endLongitude' in data['summaryDTO']:
+        activity_data["EndLatitude"] = float(data['summaryDTO']['endLatitude'])
+        activity_data["EndLongitude"] = float(data['summaryDTO']['endLongitude'])
 
     if "AverageHR" in data['summaryDTO']:
         activity_data["AverageHR"] = data['summaryDTO']['averageHR']
