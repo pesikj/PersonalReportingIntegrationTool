@@ -13,5 +13,6 @@
     "Příjem převodem uvnitř banky": "income", 
     "Bezhotovostní platba": "expense", 
     "Poplatek": "expense",
-    "Okamžitá odchozí platba": "expense"
+    "Okamžitá odchozí platba": "expense",
+    "Okamžitá příchozí platba": "income"
 }
