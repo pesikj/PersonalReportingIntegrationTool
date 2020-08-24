@@ -62,3 +62,4 @@ GarminConnectedConnector/env/
 /FioBankStatementParser/venv/
 FioBankStatementParser/config.json
 .vscode/settings.json
+GarminConnectedConnector/.vscode/settings.json

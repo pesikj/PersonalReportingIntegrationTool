@@ -16,9 +16,6 @@ def LoginToBuxfer():
 
     http = urllib3.PoolManager()
     response = http.request("GET", url)
-    if (response.status != 200):
-        logger.error("Error logging to Buxfer.")
-        logger.error(response.text)
     responseJson = json.loads(response.data.decode('utf-8'))
     token = responseJson["response"]["token"]
     
