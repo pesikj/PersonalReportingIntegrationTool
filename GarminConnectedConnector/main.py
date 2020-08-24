@@ -95,7 +95,7 @@ for file in files:
         activity_data["AverageSpeed"] = float(data['summaryDTO']['averageSpeed']) * 3.6
     if 'elevationGain' in data['summaryDTO']:
         activity_data["ElevationGain"] = float(data['summaryDTO']['elevationGain'])
-    if 'ElevationLoss' in data['summaryDTO']:
+    if 'elevationLoss' in data['summaryDTO']:
         activity_data["ElevationLoss"] = float(data['summaryDTO']['elevationLoss'])
     if 'maxSpeed' in data['summaryDTO']:
         activity_data["MaxSpeed"] = data['summaryDTO']['maxSpeed']

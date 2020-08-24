@@ -42,10 +42,8 @@ def CopyTransactionFromBankToBuxfer():
             SaveValueToList(dictTransactionData, columnName, GetElementValue(transaction, jsonMappingFile[columnName]))
 
         userIdentification = GetElementValue(transaction, "column_7")
-        #2014-09-04+02:00
         bankStatementTransactionDate = datetime.strptime(GetElementValue(transaction, "column_0")[:10], r'%Y-%m-%d').strftime(r'%Y-%m-%d')
         if (userIdentification):
-            #Nákup: ATM CS-PMDP, PLZEN, CZ, dne 2.9.2014, částka 1698.00 CZK
             reTransactionDate = re.findall(r"\d{1,2}[.]\d{1,2}[.]\d{4}", userIdentification)
             if (reTransactionDate):
                 SaveValueToList(dictTransactionData, "TransactionDate", datetime.strptime(reTransactionDate[0], '%d.%m.%Y').strftime(r'%Y-%m-%d'))
