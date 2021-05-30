@@ -8,3 +8,8 @@ mock~=2.0
 
 azure-cosmos~=3.1
 
+
+garminconnect~=0.1.22
+pandas~=1.2.4
+matplotlib~=3.4.2
+Flask~=2.0.1
