@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Garmin Connect Dashboard</title>
+</head>
+<body>
+<img src="/plot.png?activity=running" alt="my plot">
+<img src="/plot.png?activity=cycling" alt="my plot">
+
+<p>
+  Loaded activities: {{activities_metadata['loaded_activities']}}
+</p>
+
+<form action="/reload/" method="post">
+    <label for="from">From:</label><br>
+    <input type="text" id="from" name="from"><br>
+    <label for="to">To:</label><br>
+    <input type="text" id="to" name="to"><br>
+    <button class='btn btn-default'>Reload</button>
+</form>
+
+</body>
+</html>
